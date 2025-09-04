@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  api:
+    build: ./services/api
+    env_file: .env
+    ports: ["8080:8080"]
+    depends_on: [db, redis, worker]
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./secrets:/secrets:ro
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    build: ./services/worker
+    env_file: .env
+    depends_on: [db, redis]
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./secrets:/secrets:ro
+      - ./data:/data
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+
+volumes:
+  dbdata:
