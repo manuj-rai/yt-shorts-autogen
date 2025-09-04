@@ -24,13 +24,15 @@ A production-ready starter that **generates YouTube Shorts automatically** and c
 
 ## 🧱 Architecture (high-level)
 
-FastAPI (services/api) Worker (services/worker)
+```
+FastAPI (services/api)          Worker (services/worker)
 └─ creates jobs └─ consumes jobs from Redis
 └─ writes to DB └─ runs app/pipeline:
 trends → script → assets → TTS
 → captions → FFmpeg compose
 → SEO → YouTube upload → captions
 Infra: Postgres (jobs/state) + Redis (queue) + Docker
+```
 
 
 ---
@@ -66,13 +68,19 @@ curl http://localhost:8080/jobs/1
 
 ⚠️ YouTube: uploads via API may initially be private until your project is verified by Google. Plan for that in your workflow.
 
-🧪 Local development
+
+---
+
+## 🧪 Local development
 # optional: run API locally (without Docker) after installing requirements
 uvicorn services.api.main:app --reload --port 8080
 # run worker in another shell:
 python services/worker/worker.py
 
-🛡️ Security & Compliance
+
+---
+
+## 🛡️ Security & Compliance
 
 Least-privilege OAuth scopes; tokens stored outside images (/secrets).
 
@@ -84,7 +92,10 @@ Guardrails in scriptgen.safety_filter() — contributions welcome to improve fil
 
 Please report security issues privately via Issues → “Security” or email (see repo security policy if present).
 
-📌 Roadmap / Help Wanted
+
+---
+
+## 📌 Roadmap / Help Wanted
 
 We’d love help with any of the following. If you’re interested, comment on the issue or open a draft PR:
 
@@ -110,7 +121,10 @@ Docs: deepen operator runbook & troubleshooting guide.
 
 If you have other ideas, open a Discussion or Issue!
 
-🧰 Contributing
+
+---
+
+## 🧰 Contributing
 
 Fork → create a feature branch → commit with clear messages.
 
@@ -122,7 +136,8 @@ pip install ruff mypy
 ruff check .
 mypy app services
 
-Code style & security
+
+### Code style & security
 
 Keep functions small and testable.
 
@@ -134,7 +149,10 @@ Use prepared/parameterized DB queries (SQLAlchemy ORM already).
 
 Prefer pure FFmpeg filters for performance, with MoviePy only when needed.
 
-🧪 Testing ideas (starter)
+
+---
+
+## 🧪 Testing ideas (starter)
 
 Unit: seo.build_seo, captions.write_srt, trends.get_trending_topics (mock network).
 
@@ -142,7 +160,10 @@ Integration: pipeline smoke test with mocked Pexels/Azure/YouTube clients.
 
 Contract: verify YouTube payload structure and scheduling logic.
 
-🐛 Issues & Discussions
+
+---
+
+## 🐛 Issues & Discussions
 
 Bug report: include steps, logs (api & worker), and env details.
 
